@@ -1,4 +1,4 @@
-name: ExamplePlugin
+name: KesDash
 version: 1.0.0
-main: com.example.plugin.Main
+main: mc.kessud.dashboard
 api-version: 1.20
