@@ -19,6 +19,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Verify Node version
+        run: |
+          node -v
+          npm -v
+
       - name: Create Next.js app
         run: |
           npx create-next-app@latest web \
@@ -30,10 +35,10 @@ jobs:
             --import-alias "@/*" \
             --no-interactive
 
-      - name: Init shadcn/ui
+      - name: Init shadcn/ui (Node 20 compatible)
         working-directory: web
         run: |
-          npx shadcn@latest init --no-interactive
+          npx shadcn@latest init --yes
 
       - name: Commit and push
         run: |
