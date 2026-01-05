@@ -20,7 +20,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Generate Gradle build files (Kotlin DSL)
+      - name: Create Gradle build files (Kotlin DSL)
         run: |
           cat > settings.gradle.kts <<'EOF'
           rootProject.name = "spigot-plugin"
@@ -52,9 +52,9 @@ jobs:
           }
           EOF
 
-      - name: Generate Gradle Wrapper
+      - name: Generate Gradle Wrapper (system Gradle)
         run: |
-          ./gradlew wrapper --gradle-version 8.6
+          gradle wrapper --gradle-version 8.6
 
       - name: Create plugin.yml
         run: |
@@ -93,5 +93,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add .
-          git commit -m "chore: bootstrap spigot plugin (Kotlin DSL)" || true
+          git commit -m "chore: bootstrap spigot plugin (kotlin dsl)" || true
           git push
