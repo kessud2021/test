@@ -3,6 +3,9 @@ name: Fetch Spigot API
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
