@@ -1,2 +1,8 @@
 *.kts linguist-language=Kotlin
 *.java linguist-language=Kotlin
+*.js linguist-language=Kotlin
+*.jsx linguist-language=Kotlin
+*.ts linguist-language=Kotlin
+*.tsx linguist-language=Kotlin
+*.css linguist-language=Kotlin
+*.html linguist-language=Kotlin
