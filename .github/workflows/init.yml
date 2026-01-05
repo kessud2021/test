@@ -20,21 +20,79 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Generate Gradle Wrapper
+      - name: Create Gradle build files
         run: |
-          mkdir -p gradle/wrapper
-          curl -fsSL https://services.gradle.org/distributions/gradle-8.6-bin.zip -o gradle.zip
-          unzip -q gradle.zip
-          ./gradle-8.6/bin/gradle wrapper
-          rm -rf gradle-8.6 gradle.zip
+          cat > settings.gradle <<'EOF'
+          rootProject.name = 'spigot-plugin'
+          EOF
 
-      - name: Create build.gradle
-        run: |
           cat > build.gradle <<'EOF'
           plugins {
               id 'java'
           }
 
+          group = 'com.example'
+          version = '1.0.0'
+
+          java {
+              toolchain.languageVersion = JavaLanguageVersion.of(17)
+          }
+
+          repositories {
+              mavenCentral()
+              maven {
+                  url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+              }
+          }
+
+          dependencies {
+              compileOnly 'org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT'
+          }
+          EOF
+
+      - name: Generate Gradle Wrapper
+        run: |
+          gradle wrapper --gradle-version 8.6
+
+      - name: Create plugin.yml
+        run: |
+          mkdir -p src/main/resources
+          cat > src/main/resources/plugin.yml <<'EOF'
+          name: ExamplePlugin
+          version: 1.0.0
+          main: com.example.plugin.Main
+          api-version: 1.20
+          EOF
+
+      - name: Create Main plugin class
+        run: |
+          mkdir -p src/main/java/com/example/plugin
+          cat > src/main/java/com/example/plugin/Main.java <<'EOF'
+          package com.example.plugin;
+
+          import org.bukkit.plugin.java.JavaPlugin;
+
+          public final class Main extends JavaPlugin {
+
+              @Override
+              public void onEnable() {
+                  getLogger().info("Plugin enabled");
+              }
+
+              @Override
+              public void onDisable() {
+                  getLogger().info("Plugin disabled");
+              }
+          }
+          EOF
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "chore: bootstrap spigot plugin (gradle)" || true
+          git push
           group = 'com.example'
           version = '1.0.0'
 
