@@ -1,0 +1,51 @@
+name: Setup Web App
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Create Next.js app
+        run: |
+          npx create-next-app@latest web \
+            --typescript \
+            --tailwind \
+            --eslint \
+            --app \
+            --src-dir \
+            --import-alias "@/*" \
+            --no-interactive
+
+      - name: Install shadcn/ui
+        working-directory: web
+        run: |
+          npx shadcn@latest init \
+            --style default \
+            --tailwind \
+            --css-vars \
+            --no-interactive
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "chore: setup Next.js + shadcn/ui web app" || echo "Nothing to commit"
+          git push
