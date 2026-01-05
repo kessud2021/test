@@ -1,0 +1,46 @@
+name: Bootstrap Web (Node 20)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          check-latest: true
+
+      - name: Verify Node
+        run: node -v
+
+      - name: Create Next.js app
+        run: |
+          npx create-next-app@latest web \
+            --typescript \
+            --tailwind \
+            --eslint \
+            --app \
+            --src-dir \
+            --import-alias "@/*" \
+            --no-interactive
+
+      - name: Init shadcn (no legacy flags)
+        working-directory: web
+        run: |
+          npx shadcn@latest init --yes
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "bootstrap web (node 20)" || true
+          git push
