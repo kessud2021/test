@@ -1,0 +1,43 @@
+name: Fetch Spigot API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Download BuildTools
+        run: |
+          mkdir buildtools
+          curl -o buildtools/BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+
+      - name: Build Spigot API
+        run: |
+          cd buildtools
+          java -jar BuildTools.jar --rev 1.20.4 --compile SPIGOT
+
+      - name: Copy Spigot API into repo
+        run: |
+          mkdir -p libs
+          cp ~/.m2/repository/org/spigotmc/spigot-api/1.20.4-R0.1-SNAPSHOT/spigot-api-1.20.4-R0.1-SNAPSHOT.jar libs/spigot-api.jar
+
+      - name: Commit Spigot API
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add libs/spigot-api.jar
+          git commit -m "chore: vendor spigot-api 1.20.4"
+          git push
