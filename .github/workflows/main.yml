@@ -1,4 +1,4 @@
-name: Setup Web App
+name: Bootstrap Web
 
 on:
   workflow_dispatch:
@@ -7,19 +7,17 @@ permissions:
   contents: write
 
 jobs:
-  setup:
+  bootstrap:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Create Next.js app
         run: |
@@ -32,19 +30,15 @@ jobs:
             --import-alias "@/*" \
             --no-interactive
 
-      - name: Install shadcn/ui
+      - name: Init shadcn/ui
         working-directory: web
         run: |
-          npx shadcn@latest init \
-            --style default \
-            --tailwind \
-            --css-vars \
-            --no-interactive
+          npx shadcn@latest init --no-interactive
 
-      - name: Commit generated files
+      - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add .
-          git commit -m "chore: setup Next.js + shadcn/ui web app" || echo "Nothing to commit"
+          git commit -m "chore: bootstrap web app (node 20)" || true
           git push
