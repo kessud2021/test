@@ -2,7 +2,7 @@ plugins {
     java
 }
 
-group = "com.example"
+group = "mc.kessud.dashboard"
 version = "1.0.0"
 
 java {
